@@ -4,7 +4,7 @@ Last updated: 2026-09-04
 
 ## Current phase
 
-**Phase 2 code-reviewed — corrective Prompt 002b required before Phase 3**
+**Phase 2 persistence correction implemented; feature expansion paused pending product/map/navigation foundation decisions**
 
 ## Repositories
 
@@ -12,6 +12,8 @@ Last updated: 2026-09-04
 - Bilt implementation: `ahmad-obj/realityfog-d46c99`
 - Reviewed Phase 1 commit: `344697a5491ed3907e7858a6c6a96b76172857a0`
 - Reviewed Phase 2 commit: `6a19f90266d56ac5ead07f409a83daa72fcceadb`
+- Fog-scaling commit: `7a86991cf15c58fc80de775cd744867262cb934f`
+- Persistence-correction commit present in implementation repo: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
 
 ## Completed
 
@@ -30,68 +32,84 @@ Last updated: 2026-09-04
 - [x] Verified source tests were added for filter/session/mode logic.
 - [x] Created Phase 2 review: `docs/reviews/002-phase2-code-review.md`.
 - [x] Generated corrective Prompt 002b.
+- [x] Bilt added fog-render scaling work with chunking/culling/LOD.
+- [x] Bilt implemented the 002b persistence correction in commit `7e5cc087...`.
+- [x] Source now contains recoverable finalized-session handling and no 100-session history truncation.
+- [x] Created living gameplay staging document: `docs/GAME_LOGIC_BACKLOG.md`.
+- [x] Cross-linked the game-logic backlog from `docs/DECISIONS.md` and the main product spec.
+
+## Living game-logic backlog
+
+Authoritative file:
+
+`docs/GAME_LOGIC_BACKLOG.md`
+
+This file exists because accepted product logic cannot all be implemented in one prompt/phase. Future Bilt prompts must check it and pull in only the items appropriate to that phase.
+
+Currently tracked:
+
+- GL-001 smaller reveal radius — LOCKED DIRECTION
+- GL-002 continuous segment/path reveal — LOCKED DIRECTION
+- GL-003 separate Islamabad / Rawalpindi / Twin Cities progress — LOCKED DIRECTION
+- GL-004 travel-mode fairness — OPEN DESIGN
+- GL-005 revisit value without normal XP farming — OPEN DESIGN
+- GL-006 trustworthy GPS acquisition before first permanent reveal — OPEN DESIGN
+- GL-007 journey vs playable-world vs new-exploration distance — LOCKED DIRECTION
+- GL-008 zones as primary achievable exploration goals — LOCKED DIRECTION / IMPLEMENT LATER
+
+User has additional recommendations still to add. They must be recorded in this backlog as they are discussed rather than inferred in advance.
 
 ## Phase 1 status
 
 **Code-level: PASS WITH MANUAL VISUAL GATE**
 
-Manual device verification remains open for fog alignment, visual reveal quality, haptics, restart persistence and sample-route performance.
+Manual device verification remains important for fog alignment, visual reveal quality, haptics, restart persistence and performance.
 
 ## Phase 2 status
 
-**Code-level: PASS WITH FIXES REQUIRED**
+The original Phase 2 source review found two persistence issues. Bilt later implemented corrective logic in commit `7e5cc087...`:
 
-Verified from source:
-- `expo-location` is installed/configured;
-- iOS When-In-Use permission only;
-- Android coarse/fine foreground permissions with background permission blocked;
-- no background tracking task/service;
-- Start Exploration requests permission and creates a real session;
-- accepted GPS points update player, route and fog;
-- rejected points do not reveal/add route distance;
-- weak/stale/impossible fixes are filtered;
-- app backgrounding suspends tracking and checkpoints state;
-- unfinished active sessions can be restored;
-- completed-session local history exists;
-- DEV simulation remains separate from real session history;
-- fog reset keeps session history.
+- finalized sessions are written to a recoverable pending record before history completion;
+- finalized pending sessions are not restored as active GPS sessions;
+- history append remains idempotent;
+- the silent 100-session history limit was removed.
 
-### Blocking fixes before Phase 3
+No GitHub CI/status checks are attached, so command-pass claims still require runtime/build evidence rather than GitHub status alone.
 
-1. **Recoverable completion transaction** — if the completed-history write fails, current code still clears the active draft, so a completed route can be lost.
-2. **Remove silent 100-session history cap** — Explorer History must not delete old journeys after session 100.
+## Product/foundation concerns discovered after early implementation
 
-Review:
-`docs/reviews/002-phase2-code-review.md`
+Feature expansion is intentionally paused because the current implementation exposed higher-level decisions that were not designed first:
 
-Corrective prompt:
-`prompts/002b-phase2-persistence-fixes.md`
+- product navigation/screen architecture is not yet settled;
+- visual identity/UI system is not yet intentionally designed;
+- map provider/API-key/build behavior needs deliberate resolution;
+- current native-map + separate React/SVG fog overlay produces visible camera-sync problems during active gestures;
+- progression should not be layered on before the relevant game-logic rules are resolved.
 
-## Non-blocking observations
-
-- Current GPS filter rejects exactly 50 m accuracy although Prompt 002 recommended accepting `<= 50 m`; acceptable if intentional/documented.
-- Direct point-to-point distance may still accumulate small stationary GPS jitter; test on a phone before distance becomes progression-critical.
-- GitHub has no CI/status checks on the reviewed Phase 2 commit, so lint/test/type success is not independently verified here.
-
-## Current action
-
-Run in Bilt:
-
-`prompts/002b-phase2-persistence-fixes.md`
-
-Then return the new Bilt response/commit for re-review.
+These are not yet implementation instructions. They are the next architectural/design discussion.
 
 ## Planned execution order
 
-1. Prompt 001 — Foundation + fog prototype — EXECUTED / CODE-REVIEWED
-2. Prompt 002 — Real GPS sessions — EXECUTED / CODE-REVIEWED
-3. **Prompt 002b — Persistence reliability fixes — READY**
-4. Prompt 003 — Spatial territory + XP
-5. Prompt 004 — Authored zones + discoveries
-6. Prompt 005 — Session summary + explorer history UI
-7. Prompt 006 — Explorer profile + progression
-8. Prompt 007 — Local-first persistence + account sync
-9. Prompt 008 — Product polish + hardening
+The old straight-line sequence is no longer authoritative. Do **not** automatically proceed from Phase 2 into XP.
+
+Completed:
+1. Prompt 001 — Foundation + fog prototype
+2. Prompt 002 — Real GPS sessions
+3. Prompt 002b — Persistence reliability correction
+
+Before additional feature prompts, resolve the product/map/navigation foundation and reconcile future phases with `docs/GAME_LOGIC_BACKLOG.md`.
+
+Candidate later systems remain:
+- reveal/gameplay-rule hardening;
+- navigation/product shell;
+- city/zone progression;
+- authored zones + discoveries;
+- session summary + journal/history;
+- profile/progression;
+- persistence/account sync;
+- product polish/hardening.
+
+Exact order is intentionally pending redesign rather than assumed.
 
 ## Prompt history
 
@@ -99,17 +117,20 @@ Then return the new Bilt response/commit for re-review.
 Status: **EXECUTED / CODE-REVIEWED / MANUAL VISUAL GATE OPEN**
 
 ### Prompt 002 — Real GPS Exploration
-Status: **EXECUTED / CODE-REVIEWED / FIXES REQUIRED**
+Status: **EXECUTED / CODE-REVIEWED**
 Implementation commit: `6a19f90266d56ac5ead07f409a83daa72fcceadb`
 Review: `docs/reviews/002-phase2-code-review.md`
 
 ### Prompt 002b — Phase 2 Persistence Fixes
-Status: **READY / NOT YET EXECUTED**
+Status: **EXECUTED IN BILT; CORRECTIVE SOURCE PRESENT**
 File: `prompts/002b-phase2-persistence-fixes.md`
+Implementation commit: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
 
 ## Bilt execution policy
 
 - Review actual source/result before advancing.
 - Never update progress from Bilt claims alone.
 - Do not silently change locked product decisions.
-- Fix foundational data-loss issues before layering progression/history UI on top.
+- Before each new prompt, check `docs/GAME_LOGIC_BACKLOG.md` for relevant staged logic.
+- Do not let Bilt decide OPEN DESIGN items on its own.
+- Foundational product/map/navigation decisions take precedence over piling on more features.
