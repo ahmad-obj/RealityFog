@@ -4,7 +4,7 @@ Last updated: 2026-09-04
 
 ## Current phase
 
-**UX/navigation foundation approved and documented; feature expansion remains paused pending written-spec review and foundation implementation planning**
+**UX/navigation foundation approved; Foundation A product-shell plan and Bilt Prompt 003 are ready for execution**
 
 ## Repositories
 
@@ -13,7 +13,7 @@ Last updated: 2026-09-04
 - Reviewed Phase 1 commit: `344697a5491ed3907e7858a6c6a96b76172857a0`
 - Reviewed Phase 2 commit: `6a19f90266d56ac5ead07f409a83daa72fcceadb`
 - Fog-scaling commit: `7a86991cf15c58fc80de775cd744867262cb934f`
-- Persistence-correction commit: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
+- Persistence-correction/current implementation HEAD before Foundation A: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
 
 ## Authoritative product docs
 
@@ -23,29 +23,26 @@ Before every new Bilt prompt, reconcile:
 2. `docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md` — current navigation, Explorer Mode, visual and foundation architecture;
 3. `docs/DECISIONS.md` — locked decisions;
 4. `docs/GAME_LOGIC_BACKLOG.md` — staged/open gameplay logic;
-5. latest implementation review and actual Bilt source.
+5. latest relevant implementation plan/review and actual Bilt source.
 
 Where the older product spec conflicts with the newer UX/navigation foundation on exploration lifecycle or navigation, the newer UX/navigation foundation controls.
 
 ## Completed
 
 - [x] Product concept/spec/decisions established.
-- [x] Bilt-oriented early implementation plan created.
 - [x] Prompt 001 executed and code-reviewed.
 - [x] Genuine subtractive fog engine, spatial explored-cell state, simulation and persistence verified in source.
-- [x] Prompt 002 generated and executed by Bilt.
-- [x] Phase 2 implementation diff reviewed against Prompt 002.
-- [x] Foreground GPS filtering/session architecture verified as useful prototype work.
-- [x] Created Phase 2 review: `docs/reviews/002-phase2-code-review.md`.
+- [x] Prompt 002 executed and code-reviewed.
+- [x] Foreground GPS filtering/session prototype verified as useful engine work.
 - [x] Bilt added fog-render scaling work with chunking/culling/LOD.
-- [x] Bilt implemented the 002b persistence correction in commit `7e5cc087...`.
-- [x] Source now contains recoverable finalized-session handling and no 100-session history truncation.
+- [x] Bilt implemented recoverable completion and removed the 100-session history cap in commit `7e5cc087...`.
 - [x] Created living gameplay staging document: `docs/GAME_LOGIC_BACKLOG.md`.
-- [x] Cross-linked the gameplay staging document across authoritative docs.
-- [x] User approved the revised navigation/product direction: Map / Atlas / Journal, with Collection reserved for future real content.
-- [x] User approved persistent global Explorer Mode rather than repeated manual foreground-only short sessions.
-- [x] User approved predominantly monochrome black/white/graphite visual direction.
-- [x] Created `docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md`.
+- [x] User approved revised product structure: Map / Atlas / Journal, with Collection reserved for future real content.
+- [x] User approved persistent global Explorer Mode as target product behavior.
+- [x] User approved monochrome black/white/graphite visual direction.
+- [x] Created and user-approved `docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md`.
+- [x] Created Foundation A implementation plan: `docs/superpowers/plans/2026-09-04-realityfog-foundation-a-product-shell.md`.
+- [x] Created Bilt Prompt 003: `prompts/003-foundation-a-product-shell.md`.
 
 ## Living game-logic backlog
 
@@ -53,7 +50,7 @@ Authoritative file:
 
 `docs/GAME_LOGIC_BACKLOG.md`
 
-Currently tracked:
+Tracked items include:
 
 - GL-001 smaller reveal radius — LOCKED DIRECTION
 - GL-002 continuous segment/path reveal — LOCKED DIRECTION
@@ -63,83 +60,83 @@ Currently tracked:
 - GL-006 trustworthy GPS acquisition before first permanent reveal — OPEN DESIGN
 - GL-007 journey vs playable-world vs new-exploration distance — LOCKED DIRECTION
 - GL-008 zones as primary achievable exploration goals — LOCKED DIRECTION / IMPLEMENT LATER
+- GL-009 automatic Journey segmentation beneath persistent Explorer Mode — OPEN DESIGN
 
-The new persistent Explorer Mode also introduces a separate OPEN DESIGN problem: automatic Journey segmentation. Do not let Bilt invent final segmentation thresholds during unrelated work.
+Bilt must not silently decide OPEN DESIGN items during unrelated phases.
 
 ## Current implementation status
 
-The existing Bilt app contains useful engine/prototype work, including:
+The implementation repo contains useful engine/prototype work:
 
 - fog and explored-territory state;
 - GPS filtering;
 - persistence/recovery;
 - fog chunking/culling/LOD;
-- explicit short-session prototype;
+- explicit foreground short-session prototype;
 - source tests.
 
-But several prototype choices are **not target product decisions**:
+Prototype choices that are **not** final product decisions:
 
 - foreground-only explicit short sessions are superseded by persistent Explorer Mode + automatically segmented Journey direction;
 - the single-screen app shell is superseded by Map / Atlas / Journal navigation;
 - current navy/amber/cyan styling is superseded by monochrome direction;
 - current native map + detached React/SVG fog camera behavior is not accepted as final due visible gesture desynchronization.
 
-## Foundation problems to solve before feature expansion
+## Revised foundation sequence
 
-### A. Product shell
+### Foundation A — Product shell
 
-- meaningful Map / Atlas / Journal routes;
-- restrained global navigation;
-- Explorer Mode global active state/control;
-- monochrome design-system primitives;
-- no empty Collection tab yet.
+Plan:
+`docs/superpowers/plans/2026-09-04-realityfog-foundation-a-product-shell.md`
 
-### B. Map architecture
+Prompt:
+`prompts/003-foundation-a-product-shell.md`
 
-- resolve Android provider/API-key/build configuration;
-- determine root solution for fog/map synchronization during active gestures;
-- evaluate whether current `react-native-maps` architecture can satisfy RealityFog or whether another map/rendering stack is necessary;
-- validate on a real native build/device rather than trusting static code.
+Scope:
+- Map / Atlas / Journal navigation;
+- real Atlas city/Twin Cities statistics from current explored cells;
+- real Journal view from current completed local records;
+- monochrome design system;
+- global display of the current foreground exploration state;
+- preserve current engine work.
 
-### C. Persistent Explorer Mode
+Explicitly not part of Foundation A:
+- map/fog synchronization fix;
+- background Explorer Mode;
+- auto-Journey segmentation;
+- reveal-rule redesign;
+- XP/zones/discoveries/Collection.
 
-- explicit background-location permission and transparency;
-- durable Explorer Mode ON/OFF preference;
-- correct foreground/background behavior subject to platform constraints;
-- honest degraded/stopped states when the OS prevents reliable tracking;
-- design Journey auto-segmentation before replacing short-session history.
+### Foundation B — Map architecture
 
-### D. Exploration rules
+After Foundation A review:
+- resolve map provider/API-key/build configuration;
+- prove the correct solution for fog/map synchronization during live gestures;
+- decide whether current `react-native-maps` stack remains viable through evidence.
 
-Reconcile the relevant GL backlog items before progression/XP becomes authoritative.
+### Foundation C — Persistent Explorer Mode
 
-## Planned execution order
+After map foundation:
+- background location and permissions;
+- durable Explorer Mode ON/OFF state;
+- honest platform/degraded states;
+- automatic Journey segmentation design and migration from explicit sessions.
 
-The old `GPS → XP → Zones → History` path is retired.
+### Foundation D — Exploration rules
 
-Current intended order after written-spec approval:
+Then reconcile GL-001 through GL-009 as appropriate before progression becomes authoritative.
 
-1. Foundation planning / technical spike design
-2. Product shell/navigation foundation
-3. Map-provider + fog synchronization foundation
-4. Persistent Explorer Mode/background lifecycle
-5. Journey segmentation design + migration from short sessions
-6. Smaller-radius / path interpolation / GPS-trust / distance semantics
-7. Atlas named areas + city/zone progress
-8. Progression/XP only after fairness rules are resolved
-9. Discoveries and richer Journal
-10. Collection later when a real badge/photo-find system is ready
-11. Account sync/social/other expansions only after core loop is stable
+Only after the foundations pass do we resume authored areas/zones, progression/XP, discoveries, richer Journal, account sync, and future Collection.
 
 ## Current action
 
-**Do not send Bilt another feature-building prompt yet.**
+Run Bilt against the existing implementation using:
 
-The written UX/navigation foundation is at:
+`prompts/003-foundation-a-product-shell.md`
 
-`docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md`
+Do not ask Bilt to continue beyond Foundation A automatically.
 
-It is awaiting user review under the Superpowers architectural workflow. After explicit written-spec approval, create a new implementation plan tailored to the revised foundation rather than continuing the old prompt sequence.
+After Bilt returns, review the actual repository diff and runtime/screenshots before generating Foundation B work.
 
 ## Bilt execution policy
 
