@@ -4,7 +4,13 @@ Last updated: 2026-09-04
 
 ## Current phase
 
-**Implementation planning complete — awaiting Bilt Prompt 001 execution**
+**Phase 1 code-reviewed — Phase 2 prompt ready**
+
+## Repositories
+
+- Control/docs/prompts: `ahmad-obj/RealityFog`
+- Bilt implementation: `ahmad-obj/realityfog-d46c99`
+- Reviewed Phase 1 commit: `344697a5491ed3907e7858a6c6a96b76172857a0`
 
 ## Completed
 
@@ -21,30 +27,55 @@ Last updated: 2026-09-04
 - [x] Established Bilt AI as implementation agent.
 - [x] Created Bilt-oriented V1 implementation plan.
 - [x] Generated Prompt 001 for the foundation + fog-reveal prototype.
+- [x] Bilt executed Prompt 001 in `ahmad-obj/realityfog-d46c99`.
+- [x] Reviewed the actual Phase 1 source at commit `344697a...`.
+- [x] Verified genuine subtractive SVG fog masking, spatial explored-cell state, dev simulation, and local persistence in source.
+- [x] Created Phase 1 review: `docs/reviews/001-phase1-code-review.md`.
+- [x] Generated Prompt 002 for real foreground GPS exploration sessions.
 
-## Current gate
+## Phase 1 status
 
-Run this prompt in Bilt:
+**Code-level: PASS WITH MANUAL VISUAL GATE**
 
-`prompts/001-foundation-fog-prototype.md`
+Verified from source:
+- real map-first implementation exists;
+- fog is genuinely removed through SVG masking;
+- fog/reveal geometry is map-anchored;
+- explored territory is separate from route history;
+- explored state persists via AsyncStorage;
+- dev simulation is clearly labelled;
+- reset behavior exists.
 
-The goal is to prove the highest-risk mechanic before building the rest: a real map of Islamabad/Rawalpindi with satisfying, geographically anchored fog that is progressively removed by a development simulated route and remains persistently revealed.
+Not independently verified from GitHub:
+- native runtime launch;
+- Bilt's lint/type-clean claim (no CI status attached to reviewed commit);
+- actual visual smoothness/alignment on device;
+- haptics;
+- runtime restart persistence.
 
-## What to return after Bilt Prompt 001
+Report discrepancy:
+- Bilt said explored cells were delta-encoded in storage; source actually writes the string cell-key array directly. Acceptable for Phase 1, but the report was inaccurate.
 
-Any combination that lets the result be verified:
-- Bilt's implementation report;
-- screenshots/video/preview;
-- errors;
-- exported code/repository state if available;
-- your own notes about what works or looks wrong.
+Manual visual gate still worth checking:
+- pan/zoom fog alignment;
+- organic reveal feel;
+- repeated route gives nearly no new reveal;
+- force-close/relaunch persistence;
+- reset restores fog;
+- no obvious frame collapse on the sample route.
 
-I will review that evidence before issuing Prompt 002.
+## Current action
+
+Run this in Bilt against the existing implementation:
+
+`prompts/002-real-gps-exploration.md`
+
+Objective: add deliberate **real foreground GPS exploration sessions** with permission handling, trusted-location filtering, route capture, session persistence/recovery, and clean Start/End Exploration lifecycle without expanding into history UI, auth or social features yet.
 
 ## Planned execution order
 
-1. **Prompt 001:** Foundation + fog-reveal prototype — READY
-2. Prompt 002: Real exploration session + GPS filtering
+1. **Prompt 001:** Foundation + fog-reveal prototype — EXECUTED / CODE-REVIEWED
+2. **Prompt 002:** Real exploration session + GPS filtering — READY
 3. Prompt 003: Spatial territory model + XP
 4. Prompt 004: Authored zones + discoveries
 5. Prompt 005: Session summary + explorer history
@@ -65,8 +96,18 @@ I will review that evidence before issuing Prompt 002.
 
 ### Prompt 001 — Foundation + Fog Prototype
 
-Status: **READY / NOT YET VERIFIED**
+Status: **EXECUTED / CODE-REVIEWED / MANUAL VISUAL GATE OPEN**
 
 File: `prompts/001-foundation-fog-prototype.md`
 
-Objective: establish the React Native/Expo foundation and prove the core fog-of-war visual/technical mechanic with development-only simulated movement and local persistence.
+Implementation commit: `344697a5491ed3907e7858a6c6a96b76172857a0`
+
+Review: `docs/reviews/001-phase1-code-review.md`
+
+### Prompt 002 — Real GPS Exploration
+
+Status: **READY / NOT YET EXECUTED**
+
+File: `prompts/002-real-gps-exploration.md`
+
+Objective: real foreground location permission, Start/End Exploration lifecycle, GPS quality filtering, route capture, active-session persistence/recovery, and coexistence with the dev simulator.
