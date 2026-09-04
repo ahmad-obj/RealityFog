@@ -4,7 +4,7 @@ Last updated: 2026-09-04
 
 ## Current phase
 
-**Phase 2 persistence correction implemented; feature expansion paused pending product/map/navigation foundation decisions**
+**UX/navigation foundation approved and documented; feature expansion remains paused pending written-spec review and foundation implementation planning**
 
 ## Repositories
 
@@ -13,38 +13,45 @@ Last updated: 2026-09-04
 - Reviewed Phase 1 commit: `344697a5491ed3907e7858a6c6a96b76172857a0`
 - Reviewed Phase 2 commit: `6a19f90266d56ac5ead07f409a83daa72fcceadb`
 - Fog-scaling commit: `7a86991cf15c58fc80de775cd744867262cb934f`
-- Persistence-correction commit present in implementation repo: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
+- Persistence-correction commit: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
+
+## Authoritative product docs
+
+Before every new Bilt prompt, reconcile:
+
+1. `docs/superpowers/specs/2026-09-04-reality-fog-design.md` — overall thesis/product scope;
+2. `docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md` — current navigation, Explorer Mode, visual and foundation architecture;
+3. `docs/DECISIONS.md` — locked decisions;
+4. `docs/GAME_LOGIC_BACKLOG.md` — staged/open gameplay logic;
+5. latest implementation review and actual Bilt source.
+
+Where the older product spec conflicts with the newer UX/navigation foundation on exploration lifecycle or navigation, the newer UX/navigation foundation controls.
 
 ## Completed
 
 - [x] Product concept/spec/decisions established.
-- [x] Bilt-oriented V1 implementation plan created.
+- [x] Bilt-oriented early implementation plan created.
 - [x] Prompt 001 executed and code-reviewed.
 - [x] Genuine subtractive fog engine, spatial explored-cell state, simulation and persistence verified in source.
 - [x] Prompt 002 generated and executed by Bilt.
 - [x] Phase 2 implementation diff reviewed against Prompt 002.
-- [x] Verified foreground-only Expo Location configuration.
-- [x] Verified Start/End Exploration architecture and real GPS watcher lifecycle.
-- [x] Verified GPS quality filtering before route/reveal state.
-- [x] Verified active-session checkpointing and foreground/background recovery logic.
-- [x] Verified outside-world points do not reveal fog.
-- [x] Verified simulator/real-session active-mode exclusion.
-- [x] Verified source tests were added for filter/session/mode logic.
+- [x] Foreground GPS filtering/session architecture verified as useful prototype work.
 - [x] Created Phase 2 review: `docs/reviews/002-phase2-code-review.md`.
-- [x] Generated corrective Prompt 002b.
 - [x] Bilt added fog-render scaling work with chunking/culling/LOD.
 - [x] Bilt implemented the 002b persistence correction in commit `7e5cc087...`.
 - [x] Source now contains recoverable finalized-session handling and no 100-session history truncation.
 - [x] Created living gameplay staging document: `docs/GAME_LOGIC_BACKLOG.md`.
-- [x] Cross-linked the game-logic backlog from `docs/DECISIONS.md` and the main product spec.
+- [x] Cross-linked the gameplay staging document across authoritative docs.
+- [x] User approved the revised navigation/product direction: Map / Atlas / Journal, with Collection reserved for future real content.
+- [x] User approved persistent global Explorer Mode rather than repeated manual foreground-only short sessions.
+- [x] User approved predominantly monochrome black/white/graphite visual direction.
+- [x] Created `docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md`.
 
 ## Living game-logic backlog
 
 Authoritative file:
 
 `docs/GAME_LOGIC_BACKLOG.md`
-
-This file exists because accepted product logic cannot all be implemented in one prompt/phase. Future Bilt prompts must check it and pull in only the items appropriate to that phase.
 
 Currently tracked:
 
@@ -57,80 +64,89 @@ Currently tracked:
 - GL-007 journey vs playable-world vs new-exploration distance — LOCKED DIRECTION
 - GL-008 zones as primary achievable exploration goals — LOCKED DIRECTION / IMPLEMENT LATER
 
-User has additional recommendations still to add. They must be recorded in this backlog as they are discussed rather than inferred in advance.
+The new persistent Explorer Mode also introduces a separate OPEN DESIGN problem: automatic Journey segmentation. Do not let Bilt invent final segmentation thresholds during unrelated work.
 
-## Phase 1 status
+## Current implementation status
 
-**Code-level: PASS WITH MANUAL VISUAL GATE**
+The existing Bilt app contains useful engine/prototype work, including:
 
-Manual device verification remains important for fog alignment, visual reveal quality, haptics, restart persistence and performance.
+- fog and explored-territory state;
+- GPS filtering;
+- persistence/recovery;
+- fog chunking/culling/LOD;
+- explicit short-session prototype;
+- source tests.
 
-## Phase 2 status
+But several prototype choices are **not target product decisions**:
 
-The original Phase 2 source review found two persistence issues. Bilt later implemented corrective logic in commit `7e5cc087...`:
+- foreground-only explicit short sessions are superseded by persistent Explorer Mode + automatically segmented Journey direction;
+- the single-screen app shell is superseded by Map / Atlas / Journal navigation;
+- current navy/amber/cyan styling is superseded by monochrome direction;
+- current native map + detached React/SVG fog camera behavior is not accepted as final due visible gesture desynchronization.
 
-- finalized sessions are written to a recoverable pending record before history completion;
-- finalized pending sessions are not restored as active GPS sessions;
-- history append remains idempotent;
-- the silent 100-session history limit was removed.
+## Foundation problems to solve before feature expansion
 
-No GitHub CI/status checks are attached, so command-pass claims still require runtime/build evidence rather than GitHub status alone.
+### A. Product shell
 
-## Product/foundation concerns discovered after early implementation
+- meaningful Map / Atlas / Journal routes;
+- restrained global navigation;
+- Explorer Mode global active state/control;
+- monochrome design-system primitives;
+- no empty Collection tab yet.
 
-Feature expansion is intentionally paused because the current implementation exposed higher-level decisions that were not designed first:
+### B. Map architecture
 
-- product navigation/screen architecture is not yet settled;
-- visual identity/UI system is not yet intentionally designed;
-- map provider/API-key/build behavior needs deliberate resolution;
-- current native-map + separate React/SVG fog overlay produces visible camera-sync problems during active gestures;
-- progression should not be layered on before the relevant game-logic rules are resolved.
+- resolve Android provider/API-key/build configuration;
+- determine root solution for fog/map synchronization during active gestures;
+- evaluate whether current `react-native-maps` architecture can satisfy RealityFog or whether another map/rendering stack is necessary;
+- validate on a real native build/device rather than trusting static code.
 
-These are not yet implementation instructions. They are the next architectural/design discussion.
+### C. Persistent Explorer Mode
+
+- explicit background-location permission and transparency;
+- durable Explorer Mode ON/OFF preference;
+- correct foreground/background behavior subject to platform constraints;
+- honest degraded/stopped states when the OS prevents reliable tracking;
+- design Journey auto-segmentation before replacing short-session history.
+
+### D. Exploration rules
+
+Reconcile the relevant GL backlog items before progression/XP becomes authoritative.
 
 ## Planned execution order
 
-The old straight-line sequence is no longer authoritative. Do **not** automatically proceed from Phase 2 into XP.
+The old `GPS → XP → Zones → History` path is retired.
 
-Completed:
-1. Prompt 001 — Foundation + fog prototype
-2. Prompt 002 — Real GPS sessions
-3. Prompt 002b — Persistence reliability correction
+Current intended order after written-spec approval:
 
-Before additional feature prompts, resolve the product/map/navigation foundation and reconcile future phases with `docs/GAME_LOGIC_BACKLOG.md`.
+1. Foundation planning / technical spike design
+2. Product shell/navigation foundation
+3. Map-provider + fog synchronization foundation
+4. Persistent Explorer Mode/background lifecycle
+5. Journey segmentation design + migration from short sessions
+6. Smaller-radius / path interpolation / GPS-trust / distance semantics
+7. Atlas named areas + city/zone progress
+8. Progression/XP only after fairness rules are resolved
+9. Discoveries and richer Journal
+10. Collection later when a real badge/photo-find system is ready
+11. Account sync/social/other expansions only after core loop is stable
 
-Candidate later systems remain:
-- reveal/gameplay-rule hardening;
-- navigation/product shell;
-- city/zone progression;
-- authored zones + discoveries;
-- session summary + journal/history;
-- profile/progression;
-- persistence/account sync;
-- product polish/hardening.
+## Current action
 
-Exact order is intentionally pending redesign rather than assumed.
+**Do not send Bilt another feature-building prompt yet.**
 
-## Prompt history
+The written UX/navigation foundation is at:
 
-### Prompt 001 — Foundation + Fog Prototype
-Status: **EXECUTED / CODE-REVIEWED / MANUAL VISUAL GATE OPEN**
+`docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md`
 
-### Prompt 002 — Real GPS Exploration
-Status: **EXECUTED / CODE-REVIEWED**
-Implementation commit: `6a19f90266d56ac5ead07f409a83daa72fcceadb`
-Review: `docs/reviews/002-phase2-code-review.md`
-
-### Prompt 002b — Phase 2 Persistence Fixes
-Status: **EXECUTED IN BILT; CORRECTIVE SOURCE PRESENT**
-File: `prompts/002b-phase2-persistence-fixes.md`
-Implementation commit: `7e5cc087c4b9a46e5f176079050c58dc84ddadb0`
+It is awaiting user review under the Superpowers architectural workflow. After explicit written-spec approval, create a new implementation plan tailored to the revised foundation rather than continuing the old prompt sequence.
 
 ## Bilt execution policy
 
 - Review actual source/result before advancing.
 - Never update progress from Bilt claims alone.
 - Do not silently change locked product decisions.
-- Before each new prompt, check `docs/GAME_LOGIC_BACKLOG.md` for relevant staged logic.
+- Before each new prompt, check both UX/navigation spec and `docs/GAME_LOGIC_BACKLOG.md`.
 - Do not let Bilt decide OPEN DESIGN items on its own.
-- Foundational product/map/navigation decisions take precedence over piling on more features.
+- Technical spikes must answer one explicit architectural question rather than opportunistically build unrelated features.
+- Foundation quality takes precedence over piling on gameplay features.
