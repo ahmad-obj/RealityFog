@@ -4,6 +4,10 @@ Date: 2026-09-04
 Status: Ready for user review
 Scope: Islamabad + Rawalpindi only
 
+> **Living game-logic companion:** `docs/GAME_LOGIC_BACKLOG.md`
+>
+> This product spec defines the overall product. Detailed gameplay rules that are accepted but intentionally staged across later Bilt phases — including reveal radius, route interpolation, travel-mode fairness, revisit value, GPS acquisition, distance semantics, city progress, and zone goals — are maintained in the game-logic backlog. Future implementation prompts must check both documents before changing those systems.
+
 ## 1. Product thesis
 
 RealityFog turns Islamabad and Rawalpindi into an exploration game. The map begins hidden under fog. The only way to reveal the world is to physically travel through it.
@@ -29,6 +33,7 @@ No global launch map in the first product. The restricted geography is intention
 - Revealed fog does not return.
 - Previously explored areas remain visible even when location tracking is off.
 - Passive 24/7 reveal is not part of V1.
+- Exact reveal semantics are governed by `docs/GAME_LOGIC_BACKLOG.md`; the current prototype radius is not a final product rule.
 
 ## 3. Core gameplay loop
 
@@ -50,6 +55,7 @@ No global launch map in the first product. The restricted geography is intention
 - Revealed territory should have organic edges rather than obvious square tiles in the UI.
 - Current exploration should animate into the permanent explored map.
 - Map remains usable underneath the game layer.
+- Reveal radius and continuous segment-reveal behavior are staged decisions tracked in `docs/GAME_LOGIC_BACKLOG.md`.
 
 ### B. Exploration session
 A session records:
@@ -63,6 +69,8 @@ A session records:
 - XP earned
 
 V1 only records/reveals through deliberate exploration sessions. Passive background history can be evaluated later as a separate opt-in feature.
+
+Future session statistics must distinguish journey distance from actual exploration distance as defined in the game-logic backlog.
 
 ### C. Explorer History
 Every completed session becomes a permanent entry.
@@ -98,6 +106,8 @@ Each zone can contain:
 
 Exact zone boundaries belong in content data, not hardcoded UI logic.
 
+Zone progress is intended to become the primary achievable exploration goal beneath high-level city progress; implementation timing is tracked in the game-logic backlog.
+
 ### E. Discoveries
 Handcrafted places create density.
 
@@ -121,7 +131,7 @@ Initial progression system:
 - exploration streaks/weekly goals
 - explorer level
 
-Repeatedly traveling the same route should generate little or no exploration XP.
+Repeatedly traveling the same route should generate little or no normal exploration XP. The exact value of revisits and travel-mode effects are still open design questions and must be resolved through `docs/GAME_LOGIC_BACKLOG.md` before permanent progression rules are implemented.
 
 ## 5. Experience principles
 
@@ -169,7 +179,8 @@ After exploration:
 - level
 - Islamabad explored %
 - Rawalpindi explored %
-- total distance
+- Twin Cities overall explored %
+- total journey/exploration statistics
 - discoveries
 - zone completions
 - streaks/achievements
@@ -215,6 +226,7 @@ Important technical rules:
 - GPS tracking must stop cleanly when a session ends.
 - Session data should not be lost if the app is briefly backgrounded or connectivity drops.
 - Development/test builds may expose a clearly labeled simulated-route mode so the core loop can be validated without physically traversing the city; this must never count as legitimate production exploration.
+- Before hardening permanent reveal/progression behavior, consult `docs/GAME_LOGIC_BACKLOG.md` for the accepted smaller-radius, route-interpolation, GPS-acquisition, travel-mode and distance-semantics directions.
 
 ## 9. Error/edge handling
 
@@ -224,6 +236,7 @@ Important technical rules:
 - App interruption: preserve active session state and recover safely.
 - Outside Islamabad/Rawalpindi: show the location, but no world progression or fog-unlocking gameplay.
 - Teleport/impossible GPS movement: ignore suspicious segment for reveal and XP.
+- The exact initial GPS-acquisition lock before first permanent reveal remains an open design item in `docs/GAME_LOGIC_BACKLOG.md` and must not be guessed by implementation agents.
 
 ## 10. V1 acceptance criteria
 
@@ -240,6 +253,7 @@ A usable first product must prove the loop:
 9. At least several authored zones and sample discoveries make the experience feel game-like.
 10. XP/progress changes only for meaningful new exploration.
 11. UI feels intentionally designed as an exploration game rather than a generic map utility.
+12. Islamabad, Rawalpindi, and Twin Cities overall exploration percentages are not conflated.
 
 ## 11. Deliberately deferred
 
@@ -264,6 +278,8 @@ These remain possible later without distorting the first build.
 - Map performance must remain smooth as explored territory grows.
 - The app needs enough authored discoveries/zones to feel dense.
 - History must feel personally valuable enough to retain users after novelty fades.
+- Travel-mode rules must preserve fairness without making legitimate vehicle-based exploration feel invalid.
+- Already explored territory must retain value without becoming an infinite progression farm.
 
 ## 13. Current decisions
 
@@ -274,11 +290,38 @@ Locked:
 - fog permanently reveals through verified real movement during active sessions
 - strong personal history of when/where the user traveled
 - dense authored experience over broad geographic coverage
+- smaller final reveal radius than the current prototype
+- continuous path/segment reveal between accepted GPS samples
+- separate Islamabad / Rawalpindi / Twin Cities progress
+- separate journey and exploration distance concepts
+- zones as primary achievable local exploration goals
 
 Open for later iteration:
 - final name/brand treatment
 - exact map SDK/provider
 - exact territory-cell resolution
+- exact final reveal radius
+- final travel-mode rules
+- final revisit-value mechanics
+- final GPS-acquisition/lock criteria
 - progression balancing
 - exact zone list
 - social mechanics
+
+## 14. Living game-logic backlog
+
+The authoritative staging document for accepted-but-not-all-at-once gameplay logic is:
+
+`docs/GAME_LOGIC_BACKLOG.md`
+
+Current tracked items:
+- GL-001 smaller reveal radius;
+- GL-002 continuous reveal along accepted route segments;
+- GL-003 separate city and Twin Cities progress;
+- GL-004 travel-mode fairness — OPEN DESIGN;
+- GL-005 revisit value without XP farming — OPEN DESIGN;
+- GL-006 trustworthy GPS acquisition before first permanent reveal — OPEN DESIGN;
+- GL-007 separate journey/playable/new-exploration distance semantics;
+- GL-008 zones as primary achievable exploration goals.
+
+Any future Bilt prompt touching one of these areas must explicitly reconcile the relevant GL item instead of silently making a new rule.
