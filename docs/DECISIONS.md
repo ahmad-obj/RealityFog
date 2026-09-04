@@ -16,20 +16,26 @@ This file records decisions that should not be silently changed by later Bilt pr
 - Repeated travel through already explored territory should provide little/no exploration reward.
 - Actual app implementation is delegated to **Bilt AI**.
 - ChatGPT maintains project docs, decisions, progress, implementation prompts and reviews Bilt output.
+- Control/documentation repository: `ahmad-obj/RealityFog`.
+- Current Bilt implementation repository: `ahmad-obj/realityfog-d46c99`.
 
 ## Working technical direction
 
-- Bilt target: React Native + Expo.
+- Bilt target: React Native + Expo + TypeScript.
+- Current implementation uses `react-native-maps`, `react-native-svg`, Zustand and AsyncStorage.
 - GPS/location is required for the core loop.
-- Fog state should use a spatial representation rather than treating raw GPS history as the authoritative explored map.
+- Fog state uses a spatial representation rather than treating raw GPS history as the authoritative explored map.
+- Current prototype spatial grid is approximately **100 m × 100 m cells** with an organic SVG-mask reveal layer.
 - Weak/impossible GPS readings should not reveal territory.
 - History/progress should survive restart and intermittent connectivity.
+- Phase 1 uses development-only simulated movement; Phase 2 introduces deliberate foreground GPS sessions.
+- Passive/background 24/7 location tracking remains out of scope.
 
 ## Deferred / not locked yet
 
 - Final product name and visual identity.
-- Map SDK/provider.
-- Territory cell/tile resolution.
+- Final map SDK/provider for production.
+- Final territory cell/tile resolution.
 - Backend provider.
 - Final zone boundaries.
 - XP balancing.
