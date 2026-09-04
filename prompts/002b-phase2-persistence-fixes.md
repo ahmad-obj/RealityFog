@@ -4,13 +4,29 @@ Continue from the current RealityFog implementation in:
 
 `ahmad-obj/realityfog-d46c99`
 
+Current implementation HEAD reviewed for this prompt:
+
+`7a86991cf15c58fc80de775cd744867262cb934f`
+
 Do not redesign the app and do not start Phase 3 yet.
 
-This is a focused corrective pass for two issues found during code review of commit:
+This is a focused corrective pass for two persistence issues that remain present after the Phase 2 implementation and the later autonomous fog-scaling optimization.
 
-`6a19f90266d56ac5ead07f409a83daa72fcceadb`
+## Preserve current work
 
-Preserve the existing foreground GPS session architecture, fog engine, location filtering, simulator, UI, and local-first behavior.
+Do **not** revert or rewrite the working Phase 1/2 architecture.
+
+In particular preserve:
+- foreground-only real GPS exploration sessions;
+- existing trusted-location filtering;
+- Start / End Exploration lifecycle;
+- DEV simulation and its separation from real sessions;
+- explored-cell fog authority;
+- the newer chunked fog render index / viewport culling / LOD blob rendering introduced in commit `7a86991...`;
+- the fog stress-test DEV control added by that commit;
+- current UI/map styling and local-first behavior.
+
+The new chunked/LOD fog system is derived rendering state only and must remain compatible with explored-cell persistence.
 
 ## Fix 1 — make session completion recoverable
 
@@ -58,7 +74,7 @@ If AsyncStorage mocking is awkward in the existing test setup, extract the compl
 
 Current problem:
 
-`lib/storage/sessionStorage.ts` has `HISTORY_LIMIT = 100` and slices completed history to 100 entries.
+`lib/storage/sessionStorage.ts` still has `HISTORY_LIMIT = 100` and slices completed history to 100 entries.
 
 RealityFog's history is intended to become the user's persistent record of where and when they explored. Session 101 must not silently delete session 1.
 
@@ -70,23 +86,21 @@ Required behavior for current V1:
 - keep idempotent replacement by session id;
 - do not silently truncate history anywhere else.
 
-If you believe AsyncStorage will eventually be the wrong storage layer for large lifetime history, document that as a later migration concern. Do not solve it by deleting old history now.
+If AsyncStorage will eventually be the wrong storage layer for lifetime-scale history, document that as a later migration concern. Do not solve it by deleting old history now.
 
 ## Small correctness cleanup
 
-The Prompt 002 threshold said reported accuracy up to and including 50 m could be accepted. Current code rejects exactly 50 m.
+Prompt 002 allowed reported accuracy up to and including 50 m. Current code rejects exactly 50 m.
 
 Either:
+- change the filter to reject only `> 50 m`, or
+- deliberately keep `< 50 m` and clearly state the reason in the completion report.
 
-- change the filter to reject only `> 50 m`, **or**
-- keep `< 50 m` deliberately and clearly state the reason in the completion report.
-
-Do not spend time tuning GPS beyond that in this corrective pass.
+Do not spend time tuning GPS beyond this in the corrective pass.
 
 ## Do NOT change
 
 Do not add:
-
 - XP/levels;
 - zones/discoveries;
 - history screens;
@@ -97,7 +111,7 @@ Do not add:
 - new cities;
 - major UI redesign.
 
-Do not rewrite the working fog or GPS architecture.
+Do not replace the current fog engine, including the new chunked/LOD rendering optimization.
 
 ## Verification
 
@@ -120,6 +134,7 @@ Report only:
 2. exact new completion/pending-session flow;
 3. how finalized-session recovery works on relaunch;
 4. confirmation that history no longer truncates at 100;
-5. tests added/changed;
-6. exact command results for test/lint/format/expo-check;
-7. remaining limitations.
+5. confirmation the `7a86991...` chunked/LOD fog work was preserved;
+6. tests added/changed;
+7. exact command results for test/lint/format/expo-check;
+8. remaining limitations.
