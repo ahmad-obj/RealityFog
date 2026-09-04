@@ -9,6 +9,10 @@ This file tracks gameplay/product logic that has been accepted as important but 
 
 It is intentionally separate from the implementation plan. A feature appearing here does **not** mean it should be implemented immediately.
 
+Navigation, persistent Explorer Mode, Journal/Atlas responsibilities, Collection reservation, and visual-system direction are defined in:
+
+`docs/superpowers/specs/2026-09-04-realityfog-navigation-ux-foundation.md`
+
 Rules for future work:
 
 - Check this document before writing each new Bilt prompt.
@@ -202,14 +206,14 @@ Do not implement an arbitrary "2 fixes" or "3 fixes" rule without designing the 
 
 ### Desired outcome
 
-- starting a session feels fast;
+- starting Explorer Mode feels fast;
 - false initial reveals are rare;
 - the player understands when the app is waiting for a trustworthy location;
 - poor urban GPS does not make the app unusable.
 
 ### Revisit
 
-Before polishing real-world GPS exploration and before XP becomes meaningful.
+Before polishing persistent real-world exploration and before XP becomes meaningful.
 
 ---
 
@@ -217,13 +221,13 @@ Before polishing real-world GPS exploration and before XP becomes meaningful.
 
 **Status:** LOCKED DIRECTION
 
-A session may contain legitimate travel outside the playable world or through already explored territory. Those kilometres still belong to the person's journey history, but they are not identical to actual RealityFog exploration.
+A Journey may contain legitimate travel outside the playable world or through already explored territory. Those kilometres still belong to the person's history, but they are not identical to actual RealityFog exploration.
 
 ### Decision
 
 Keep separate concepts/statistics for at least:
 
-- **total journey distance** — legitimate accepted travel recorded during the session;
+- **total journey distance** — legitimate accepted travel recorded during the Journey;
 - **playable-world distance** — legitimate travel inside Islamabad/Rawalpindi;
 - **new-exploration distance/progress** — movement that meaningfully contributes to new exploration, once its exact definition is finalized.
 
@@ -231,7 +235,7 @@ Do not use one generic `distanceM` value for every future profile/progression pu
 
 ### Revisit
 
-Session/history data-model evolution and progression/profile phases.
+Journey/Journal data-model evolution and progression/profile phases.
 
 ---
 
@@ -243,7 +247,7 @@ A single giant city-wide percentage will become psychologically weak as progress
 
 ### Decision
 
-City percentages remain useful high-level identity/status numbers, but the primary moment-to-moment completion goals should be **zones**.
+City percentages remain useful high-level identity/status numbers, but the primary moment-to-moment completion goals should be **zones / named areas**.
 
 The experience should eventually communicate progress more like:
 
@@ -259,7 +263,48 @@ Users should regularly have reachable targets rather than seeing only a huge cit
 
 ### Revisit
 
-Zone/discovery phase and later progression polish.
+Atlas/area/discovery phase and later progression polish.
+
+---
+
+## GL-009 — Automatically segment Journeys beneath persistent Explorer Mode
+
+**Status:** OPEN DESIGN
+
+Explorer Mode is now intended to remain ON until the user explicitly stops it, including background operation where platform rules permit. Therefore one Explorer Mode activation cannot equal one history session.
+
+### Accepted direction
+
+- Explorer Mode is a long-lived global state.
+- **Journeys** are shorter, automatically derived history records beneath it.
+- The user should not need to manually start/stop every commute, walk, or trip simply to keep Journal history usable.
+- One multi-day Explorer Mode period must not become one giant Journey.
+
+### Final segmentation rule is intentionally undecided
+
+Potential signals include:
+
+- meaningful movement beginning;
+- sustained stationary/inactive time;
+- large gaps between trusted fixes;
+- day boundaries;
+- loss/restoration of reliable tracking;
+- future activity/transport classification.
+
+Do **not** hardcode arbitrary inactivity or distance thresholds in an unrelated Bilt prompt.
+
+### Desired outcome
+
+- Journal entries feel naturally understandable;
+- normal daily movement is separated without user work;
+- short pauses do not fragment one trip into many records;
+- hours of inactivity do not remain part of one Journey;
+- background/OS interruptions do not create misleading history;
+- segmentation remains compatible with GL-004 travel-mode design and GL-007 distance semantics.
+
+### Revisit
+
+Before replacing the current explicit short-session history model with persistent Explorer Mode in production behavior.
 
 ---
 
@@ -274,7 +319,8 @@ Zone/discovery phase and later progression polish.
 | GL-005 | Revisited territory must retain value without XP farming | OPEN DESIGN |
 | GL-006 | Stronger initial GPS lock before permanent reveal | OPEN DESIGN |
 | GL-007 | Separate journey vs exploration distance | LOCKED DIRECTION |
-| GL-008 | Zones become primary achievable exploration goals | LOCKED DIRECTION / IMPLEMENT LATER |
+| GL-008 | Zones/named areas become primary achievable exploration goals | LOCKED DIRECTION / IMPLEMENT LATER |
+| GL-009 | Auto-segment Journeys beneath persistent Explorer Mode | OPEN DESIGN |
 
 ---
 
