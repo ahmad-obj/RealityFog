@@ -1,7 +1,7 @@
 # RealityFog — Product Design
 
 Date: 2026-09-04
-Status: Draft for user review
+Status: Ready for user review
 Scope: Islamabad + Rawalpindi only
 
 ## 1. Product thesis
@@ -25,14 +25,15 @@ No global launch map in the first product. The restricted geography is intention
 
 ### Core rule
 - Unvisited traversable territory is hidden by fog.
-- Moving physically through an area permanently reveals that territory for the user.
+- During an active exploration session, physical movement permanently reveals territory around the verified GPS route.
 - Revealed fog does not return.
 - Previously explored areas remain visible even when location tracking is off.
+- Passive 24/7 reveal is not part of V1.
 
 ## 3. Core gameplay loop
 
 1. Open the app and see your explored world surrounded by fog.
-2. Choose to roam naturally or start an exploration session.
+2. Start an exploration session with one action.
 3. Move through real space.
 4. GPS movement reveals map territory around your path.
 5. New territory produces immediate visual and haptic feedback.
@@ -45,7 +46,7 @@ No global launch map in the first product. The restricted geography is intention
 
 ### A. Fog map
 - Smooth dark fog covering unexplored territory.
-- GPS trail reveals territory continuously around the user.
+- GPS trail reveals territory continuously around the user during an active session.
 - Revealed territory should have organic edges rather than obvious square tiles in the UI.
 - Current exploration should animate into the permanent explored map.
 - Map remains usable underneath the game layer.
@@ -61,7 +62,7 @@ A session records:
 - discoveries reached
 - XP earned
 
-The app should distinguish ordinary movement from a deliberate exploration session, while still allowing passive history later as a separate feature.
+V1 only records/reveals through deliberate exploration sessions. Passive background history can be evaluated later as a separate opt-in feature.
 
 ### C. Explorer History
 Every completed session becomes a permanent entry.
@@ -213,6 +214,7 @@ Important technical rules:
 - Do not award exploration for obviously spoofed/impossible movement in later production hardening; full anti-cheat is not required for the first visual prototype.
 - GPS tracking must stop cleanly when a session ends.
 - Session data should not be lost if the app is briefly backgrounded or connectivity drops.
+- Development/test builds may expose a clearly labeled simulated-route mode so the core loop can be validated without physically traversing the city; this must never count as legitimate production exploration.
 
 ## 9. Error/edge handling
 
@@ -229,14 +231,15 @@ A usable first product must prove the loop:
 
 1. User opens a map of Islamabad/Rawalpindi covered by fog.
 2. User grants location permission.
-3. Physical/simulated movement reveals territory around a GPS route.
-4. Revealed territory persists after restart/login.
-5. User can start and stop an exploration session.
-6. Session history records route, time, distance, and newly revealed territory.
-7. User can replay an old route.
-8. At least several authored zones and sample discoveries make the experience feel game-like.
-9. XP/progress changes only for meaningful new exploration.
-10. UI feels intentionally designed as an exploration game rather than a generic map utility.
+3. User starts an exploration session.
+4. Physical or explicitly labeled test/simulated movement reveals territory around a GPS route.
+5. Revealed territory persists after restart and account sync.
+6. User can end an exploration session cleanly.
+7. Session history records route, time, distance, and newly revealed territory.
+8. User can replay an old route.
+9. At least several authored zones and sample discoveries make the experience feel game-like.
+10. XP/progress changes only for meaningful new exploration.
+11. UI feels intentionally designed as an exploration game rather than a generic map utility.
 
 ## 11. Deliberately deferred
 
@@ -268,7 +271,7 @@ Locked:
 - mobile-first
 - Islamabad + Rawalpindi only
 - exploration-game direction
-- fog permanently reveals through real movement
+- fog permanently reveals through verified real movement during active sessions
 - strong personal history of when/where the user traveled
 - dense authored experience over broad geographic coverage
 
